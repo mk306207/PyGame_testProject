@@ -4,3 +4,5 @@ Known issues:
 - not killing enemies (just not added)
 - bat not configured very well ("escaping" from frame for a second from right side)
 - basicly can't do anything fun yet
+- at least cool looking :)
+![Background](background.png)
