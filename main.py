@@ -14,10 +14,11 @@ pygame.display.set_caption("GAME")
 #--------------------------------------------------------------------------------------
 moving_sprites = pygame.sprite.Group()
 player = Player(10,330)
-enemy = Enemy(600,300)
+enemy = Enemy(600,340)
 #enemy_hitbox = pygame.Rect()
 moving_sprites.add(player)
 #moving_sprites.add(enemy)
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

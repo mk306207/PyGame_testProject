@@ -35,6 +35,9 @@ class Player(pygame.sprite.Sprite):
           self.image_attack = self.attack[self.current_attack]
           self.is_attack = False
           
+          self.attack_cooldown = 500
+          self.last_attack_time = 0
+          
           self.death_animation = []
           self.death_animation.append(pygame.image.load('death/d1.png'))
           self.death_animation.append(pygame.image.load('death/d2.png'))
@@ -63,7 +66,7 @@ class Player(pygame.sprite.Sprite):
         if self.flip == True:
              self.image = pygame.transform.flip(self.walk[int(self.current_walk)],True, False)
         if self.is_attack==True and self.is_animating==True:
-            self.current_attack += 0.10
+            self.current_attack += 0.13
             self.current_walk = 0
         if self.current_attack >= len(self.attack):
             self.current_attack = 0
@@ -93,10 +96,14 @@ class Player(pygame.sprite.Sprite):
                 self.animate()
                 self.rect.x += 2
             elif key[pygame.K_c]==True:
-                 self.is_attack = True
-                 self.is_walking = False
-                 self.animate()
-                 #self.rect.move_ip(0,0)
+                current_time = pygame.time.get_ticks()
+                if current_time - self.last_attack_time > self.attack_cooldown:
+                    self.is_attack = True
+                    self.last_attack_time = current_time
+                    self.is_walking = False
+                    self.animate()
+                #self.rect.move_ip(0,0)
+                 
      def death(self,enemy):
         if self.rect.colliderect(enemy.rect):
             self.is_dying = True
