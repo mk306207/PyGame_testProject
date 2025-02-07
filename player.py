@@ -8,6 +8,9 @@ class Player(pygame.sprite.Sprite):
           self.exp = 0
           self.lvl = 0
           
+          self.start_x = pos_x
+          self.start_y = pos_y
+          
           self.is_animating = False
           self.walk.append(pygame.image.load('walk/1.png'))
           self.walk.append(pygame.image.load('walk/2.png'))
@@ -48,13 +51,44 @@ class Player(pygame.sprite.Sprite):
           self.image_death = self.death_animation[self.current_death_frame]
           self.is_dying = False
 
-     def update(self):
-        if self.is_dying:
-            self.is_animating = False
+
+     def death(self, enemies):
+        for enemy in enemies:
+            if self.rect.colliderect(enemy.rect) and not self.is_attack:
+                self.is_dying = True
+                print("ha ha ha")
+                self.rect.topleft = [self.start_x, self.start_y]
+                self.hp = 100 
+                break 
+            
+            
+     def attack_func(self, enemies):
+        for e in enemies.copy():  # Używamy kopii, aby nie modyfikować listy w trakcie iteracji
+            if self.rect.colliderect(e.rect):
+                print("hit!")
+                e.hp -= 10
+                if e.hp <= 0:
+                    print("dead!")
+                    set(enemies)
+                    print(f"usuwam {e}")
+                    e.kill()  # Usunięcie TYLKO tego przeciwnika
+                    print(f"Enemies in group: {len(enemies)}")
+
+                     
+                     
+                     
+     def update(self,enemies):
+        if self.rect.x < 0 or self.rect.x > 800 or self.rect.y < 0 or self.rect.y > 600:
+    # Może ustaw pozycję gracza na domyślną, jeśli jest poza ekranem
+            self.rect.topleft = [self.start_x,self.start_y]
+        self.attack_func(enemies)
+        self.death(enemies)
+        if self.hp <= 0:  # Jeśli gracz ma 0 zdrowia, nie może się poruszać ani atakować
+            self.is_dying = True
             self.current_death_frame += 0.15
             if self.current_death_frame >= len(self.death_animation):
                 self.current_death_frame = len(self.death_animation) - 1
-                self.is_animating = True
+                #self.is_animating = True
             self.image_death = self.death_animation[int(self.current_death_frame)]
         if self.is_animating == True and self.is_walking==True:
             self.current_walk += 0.15
@@ -103,8 +137,5 @@ class Player(pygame.sprite.Sprite):
                     self.is_walking = False
                     self.animate()
                 #self.rect.move_ip(0,0)
-                 
-     def death(self,enemy):
-        if self.rect.colliderect(enemy.rect):
-            self.is_dying = True
-            
+                
+        
